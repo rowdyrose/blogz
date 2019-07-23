@@ -5,7 +5,7 @@
 {% block content %}
 <h1> New Blog Entry</h1>
 <table>
-    <form action="/new_entry" method="post">
+    <form action="/" method="post">
         <tr>
             <tr>
                 <label for="title_field">Title your post:</label>
@@ -20,7 +20,7 @@
                 <label for="body_field">What would you like to say?</label>
             </td>
             <td>
-                <textarea rows="4" cols="50" id="body_field" name="body" value="{{ new_entry_body }}">What would you like to say?</textarea>
+                <textarea rows="4" cols="50" id="body_field" name="content" value="{{ new_entry_body }}">What would you like to say?</textarea>
             </td>
         </tr>
         <tr>

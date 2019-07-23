@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    <table>
+    {% for post in blogs %}
+        <tr>
+            <h1><a href="">{{post.name}}</a></h1>
+            <h3>{{post.content}}</h3>
+            <hr width="200" align="left">
+
+        </tr>
+    {% endfor %}    
+    </table>
+{% endblock %}
