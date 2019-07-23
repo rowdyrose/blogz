@@ -33,11 +33,34 @@ def index():
 
     all_posts = Blog.query.all()
    # post = Blog.query.filter_by(completed=True).all()
-    return render_template('posts.html', title="Build a Blog!", blogs=all_posts)
+    return render_template('home.html', title="Build a Blog!", blogs=all_posts)
 
 @app.route("/new_entry")
 def new_entry():
     return render_template('submission_form.html')
+
+@app.route("/posted", methods=['POST', 'GET'])
+def posted():
+    if request.method == 'POST':
+        title = request.form['title']
+        body = request.form['content']
+
+        title_error = ""
+        body_error = ""
+        if not (title):
+            title_error="Title is required!"
+        if not (body):
+            body_error="Body is required!"
+
+        if not title_error and not body_error:
+            new_post = Blog(title, body)
+            db.session.add(new_post)
+            db.session.commit()
+            return render_template('blogpost.html', title=title, body=body)
+            #return render_template('posted.html', title="Content posted")
+        else:
+            return render_template('post.html', title="Content not posted", error1 = title_error, error2 = body_error)
+    return render_template('notposted.html', title="Content not posted")
 
 
 
