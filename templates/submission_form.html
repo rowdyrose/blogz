@@ -12,15 +12,18 @@
             </tr>
             <tr> 
                 <input id="title_field" name="title" type="text" value="{{ new_entry_title }}" />
+                {% if error1|length != 0 %}<span class="error"> Title is required!</span>{% endif %}
             </tr>   
             
         </tr>
         <tr>
             <td>
                 <label for="body_field">What would you like to say?</label>
+
             </td>
             <td>
-                <textarea rows="4" cols="50" id="body_field" name="content" value="{{ new_entry_body }}">What would you like to say?</textarea>
+                <textarea rows="4" cols="50" id="body_field" name="content" value="{{ new_entry_body }}"></textarea>
+                {% if error2|length != 0 %}<span class="error"> Body is required!</span>{% endif %}
             </td>
         </tr>
         <tr>

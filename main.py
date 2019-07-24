@@ -39,7 +39,13 @@ def index():
 def new_entry():
     return render_template('submission_form.html')
 
-@app.route("/posted", methods=['POST', 'GET'])
+@app.route("/blogpost", methods=['GET'])
+def blogpost():
+    title = request.args['title']
+    content = request.args['content']
+    return render_template('blogpost.html', title=title, content=content)
+
+@app.route("/", methods=['POST', 'GET'])
 def posted():
     if request.method == 'POST':
         title = request.form['title']
@@ -49,20 +55,19 @@ def posted():
         body_error = ""
         if not (title):
             title_error="Title is required!"
-        if not (body):
+        if not (content):
             body_error="Body is required!"
 
-        if not title_error and not body_error:
-            new_post = Blog(title, body)
-            db.session.add(new_post)
-            db.session.commit()
-            return render_template('blogpost.html', title=title, body=body)
-            #return render_template('posted.html', title="Content posted")
-        else:
-            return render_template('post.html', title="Content not posted", error1 = title_error, error2 = body_error)
-    return render_template('notposted.html', title="Content not posted")
+            if not title_error and not body_error:
+                new_post = Blog(title, content)
+                db.session.add(new_post)
+                db.session.commit()
+                return render_template('blogpost.html', title=title, content=content)
+            else:
+                return render_template('post.html', title="Content not posted", error1 = title_error, error2 = body_error)
 
 
 
-if __name__ == '__main__':
-    app.run()
+
+
+app.run()
