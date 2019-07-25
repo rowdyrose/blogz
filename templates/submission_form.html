@@ -5,7 +5,7 @@
 {% block content %}
 <h1> New Blog Entry</h1>
 <table>
-    <form action="/" method="post">
+    <form action="/entry" method="post">
         <tr>
             <tr>
                 <label for="title_field">Title your post:</label>
@@ -15,17 +15,17 @@
                 {% if error1|length != 0 %}<span class="error"> Title is required!</span>{% endif %}
             </tr>   
             
-        </tr>
-        <tr>
-            <td>
+            </tr>
+            <tr>
+                <td>
                 <label for="body_field">What would you like to say?</label>
 
-            </td>
-            <td>
-                <textarea rows="4" cols="50" id="body_field" name="content" value="{{ new_entry_body }}"></textarea>
-                {% if error2|length != 0 %}<span class="error"> Body is required!</span>{% endif %}
-            </td>
-        </tr>
+                </td>
+                <td>
+                    <textarea rows="4" cols="50" id="body_field" name="content" value="{{ new_entry_body }}"></textarea>
+                    {% if error2|length != 0 %}<span class="error"> Body is required!</span>{% endif %}
+                </td>
+            </tr>
         <tr>
             <td><input id="submit_button" type="submit" value="Save"></td>
         </tr>
