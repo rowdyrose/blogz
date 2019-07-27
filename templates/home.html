@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <table>
+    <table action="/home">
     {% for post in blogs %}
         <tr>
             <h2><a href="/?id={{post.id}}">{{post.title}}</a></h2>

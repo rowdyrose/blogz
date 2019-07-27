@@ -9,8 +9,9 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 db = SQLAlchemy(app)
 app.secret_key = 'y337kGcys&zP3B'
+# above line encrypts password info
 
-
+# create database class for blog
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
@@ -21,7 +22,7 @@ class Blog(db.Model):
         self.title = title
         self.content = content
         self.owner = owner
-
+# create database class for user
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(120), unique = True)
@@ -31,10 +32,11 @@ class User(db.Model):
     def __init__(self, username, password):
         self.username = username
         self.password = password
-    
+
+# check to see if a use is logged in 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'blogpost'] 
+    allowed_routes = ['login', 'signup', 'index', 'blogpost', 'single_user', 'home'] 
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -43,28 +45,32 @@ def index():
     users = User.query.all()
     return render_template('index.html', users=users)
     
-@app.route("/blogpost", methods=['POST'])
-def blogpost():
+# displays posts on home page
+@app.route("/home", methods=['POST'])
+def home():
     title = "Build a Blog"
 
     if session:
         owner = User.query.filter_by(username = session['username']).first()
 
+
     if "id" in request.args:
         post_id = request.args.get('id')
         blog = Blog.query.filter_by(id = post_id).all()
-        # username = User.query.get(owner.username)
-        return render_template('blogpost.html', title = title, blog = blog, post_id = post_id)
+        username = User.query.get(owner.username)
+        return render_template('home.html', title = title, blog = blog, post_id = post_id)
 
     elif "user" in request.args:
         user_id = request.args.get('user')
         blog = Blog.query.filter_by(owner_id = user_id).all()
-        return render_template('blogpost.html', title = title, blog = blog)
+        return render_template('home.html', title = title, blog = blog)
 
     else:
         blog = Blog.query.order_by(Blog.id.desc()).all()
-        return render_template('blogpost.html', title = title, blog = blog)
+        return render_template('home.html', title = title, blog = blog)
 
+# login form, will prompt user if their login is incorrect or doesn't exist
+# need to write something to rereoute user to home page or blog entry when they log in
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     username = ""
@@ -82,17 +88,18 @@ def login():
                 username_error = "Please enter you user name!"
 
         if password =="":
-            password_error = "Please enter yopur password"
+            password_error = "Please enter your password"
 
         if user and user.password != password:
             password_error = "The password enter is incorrect!"
         
         if user and user.password == password:
             session['username'] = username
-            return redirect('/entry')
+            return redirect('/new_entry')
     
     return render_template('login.html', username=username, username_error=username_error, password_error=password_error)
 
+# sign user up to be able to post
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     username = ""
@@ -111,12 +118,12 @@ def signup():
             username_error = "Please enter a valid user name at least 3 characters and no spaces"
         
         if len(password) < 3 or password == "" or " " in password:
-            password_error = "Please enter a valid passwordat least 3 characters and no spaces!"
+            password_error = "Please enter a valid passwor with at least 3 characters and no spaces!"
  
         if password != verifypass:
             password_error = "Passwords do not macth!"
             verifypass_error = "Passwords do not match!"
-
+        # if the signup passes all validations, user is
         if not username_error and not password_error and not verifypass_error:
             if not existing_user:
                 new_user = User(username, password)
@@ -129,7 +136,7 @@ def signup():
     return render_template('signup.html', username = username, username_error = username_error, password_error = password_error, verifypass_error = verifypass_error)
 
 
-
+# allow user to create new blog entry
 @app.route("/new_entry", methods=['POST', 'GET'])
 def create_post():
     title = ""
@@ -153,18 +160,18 @@ def create_post():
             db.session.commit()
             
 
-        return redirect('/blog?id={}'.format(new_post.id))
+            return redirect('/?id={}'.format(new_post.id))
 
     return render_template('submission_form.html', title = title, content = content, title_error = title_error, content_error = content_error)
 
-if __name__ == "__main__":
-    app.run()
-
-
+# write a function to allow a sinlge users posts to be displayed
+#@app.route("/single_user", methods= ['GET'])
+#def single_user():
 @app.route('/logout')
 def logout():
     del session['username']
-    return redirect('/blog')
+    flash('You are logged out', 'success')
+    return redirect('/blogpost')
 
 
 
