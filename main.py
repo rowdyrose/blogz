@@ -34,7 +34,7 @@ class User(db.Model):
         self.username = username
         self.password = password
 
-# check to see if a use is logged in 
+# allows non logged in users to see certain pages but then prompt for login on the restricted links
 @app.before_request
 def require_login():
     allowed_routes = ['login', 'signup', 'index', 'blogposts', 'blog', 'home', 'userposts', 'none'] 
