@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, session, flash
+from flask import Flask, request, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 import cgi
 
@@ -37,7 +37,7 @@ class User(db.Model):
 # check to see if a use is logged in 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'blogpost', 'blog', 'home', 'singleUser', 'none'] 
+    allowed_routes = ['login', 'signup', 'index', 'blogposts', 'blog', 'home', 'userposts', 'none'] 
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -116,17 +116,22 @@ def signup():
 # shows all blog posts on one page, able to click on title to go to indiviual posts
 @app.route('/blogposts', methods=['POST', 'GET'])
 def blogposts():
-    all_posts = Blog.query.all()
-        
     blog_id = request.args.get('id')
+    user_id = request.args.get('userid')
+    posts = Blog.query.all()
+
     if blog_id:
-        post = Blog.query.get(blog_id)
-        return render_template('blogpost.html', post=post)
-        
-    return render_template('blogpost.html', title="Build a Blog!", blogs=all_posts)
+        post = Blog.query.filter_by(id=blog_id).first()
+        return render_template("singlepost.html", title=post.title, body=post.content, user=post.owner.username, user_id=post.owner_id)
+    if user_id:
+        posts = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('blogpost.html', posts=posts)
+
+    return render_template('blogpost.html', posts=posts)
+
 
 # shows a single users posts on one page
-@app.route('/userposts', methods=['POST', 'GET'])
+@app.route('/userposts', methods=['GET'])
 def userposts():
     blog_id = request.args.get('id')
     user_id = request.args.get('userid')
@@ -134,7 +139,7 @@ def userposts():
 
     if blog_id:
         post = Blog.query.filter_by(id=blog_id).first()
-        return render_template("blogpost.html", title=post.title, content=post.content, user=post.owner.username, user_id=post.owner_id)
+        return render_template("singlepost.html", title=post.title, content=post.content, user=post.owner.username, user_id=post.owner_id)
     if user_id:
         posts = Blog.query.filter_by(owner_id=user_id).all()
         return render_template('singleUser.html', posts=posts)
@@ -174,7 +179,6 @@ def create_post():
 @app.route('/logout')
 def logout():
     del session['username']
-    flash('You are logged out', 'success')
     return redirect('/')
 
 
