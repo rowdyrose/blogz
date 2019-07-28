@@ -37,7 +37,7 @@ class User(db.Model):
 # allows non logged in users to see certain pages but then prompt for login on the restricted links
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'blogposts', 'blog', 'home', 'userposts', 'none'] 
+    allowed_routes = ['login', 'signup', 'index', 'blog', 'home', 'userposts', 'none'] 
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -114,20 +114,7 @@ def signup():
     return render_template('signup.html', username = username, username_error = username_error, password_error = password_error, verifypass_error = verifypass_error)
 
 # shows all blog posts on one page, able to click on title to go to indiviual posts
-@app.route('/blogposts', methods=['POST', 'GET'])
-def blogposts():
-    blog_id = request.args.get('id')
-    user_id = request.args.get('userid')
-    posts = Blog.query.all()
 
-    if blog_id:
-        post = Blog.query.filter_by(id=blog_id).first()
-        return render_template("singlepost.html", title=post.title, body=post.content, user=post.owner.username, user_id=post.owner_id)
-    if user_id:
-        posts = Blog.query.filter_by(owner_id=user_id).all()
-        return render_template('blogpost.html', posts=posts)
-
-    return render_template('blogpost.html', posts=posts)
 
 
 # shows a single users posts on one page

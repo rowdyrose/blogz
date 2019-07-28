@@ -5,7 +5,7 @@
         <h1>Blogz Members</h1>
         <hr>
         {% for user in users %}
-        <p><a href="/?userid={{user.id}}">{{ user.username }}</a></p>
+        <p><a href="/userposts?userid={{user.id}}">{{ user.username }}</a></p>
         {% endfor %}
       </div>
 {% endblock %}
