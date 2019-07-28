@@ -129,7 +129,7 @@ def userposts():
         return render_template("singlepost.html", title=post.title, content=post.content, user=post.owner.username, user_id=post.owner_id)
     if user_id:
         posts = Blog.query.filter_by(owner_id=user_id).all()
-        return render_template('singleuser.html', posts=posts)
+        return render_template('singleUser.html', posts=posts)
 
     return render_template('singleUser.html', posts=posts)
 
@@ -158,7 +158,7 @@ def create_post():
             db.session.commit()
             
 
-            return redirect('/?id={}'.format(new_post.id))
+            return redirect('/userposts?id={0}'.format(new_post.id))
 
     return render_template('submission_form.html', title = title, content = content, title_error = title_error, content_error = content_error)
 
