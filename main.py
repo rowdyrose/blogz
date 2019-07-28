@@ -46,28 +46,6 @@ def index():
     return render_template('index.html', users=users)
     
 # displays posts on home page
-@app.route("/home", methods=['POST'])
-def home():
-    title = "Build a Blog"
-
-    if session:
-        owner = User.query.filter_by(username = session['username']).first()
-
-
-    if "id" in request.args:
-        post_id = request.args.get('id')
-        blog = Blog.query.filter_by(id = post_id).all()
-        username = User.query.get(owner.username)
-        return render_template('home.html', title = title, blog = blog, post_id = post_id)
-
-    elif "user" in request.args:
-        user_id = request.args.get('user')
-        blog = Blog.query.filter_by(owner_id = user_id).all()
-        return render_template('home.html', title = title, blog = blog)
-
-    else:
-        blog = Blog.query.order_by(Blog.id.desc()).all()
-        return render_template('home.html', title = title, blog = blog)
 
 # login form, will prompt user if their login is incorrect or doesn't exist
 # need to write something to rereoute user to home page or blog entry when they log in
@@ -134,6 +112,22 @@ def signup():
             else:
                 username_error = "That user name is already taken!"
     return render_template('signup.html', username = username, username_error = username_error, password_error = password_error, verifypass_error = verifypass_error)
+
+@app.route('/blog', methods=['POST', 'GET'])
+def blog():
+    blog_id = request.args.get('id')
+    user_id = request.args.get('userid')
+    entries = Blog.query.all()
+
+
+    if blog_id:
+        post = Blog.query.filter_by(id=blog_id).first()
+        return render_template("blogpost.html", title=post.title, body=post.body, user=post.owner.username, user_id=post.owner_id)
+    if user_id:
+        entries = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('singleUser.html', entries=entries)
+
+    return render_template('singleUser.html', entries=entries)
 
 
 # allow user to create new blog entry
