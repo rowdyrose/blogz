@@ -22,6 +22,7 @@ class Blog(db.Model):
         self.title = title
         self.content = content
         self.owner = owner
+
 # create database class for user
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -36,9 +37,10 @@ class User(db.Model):
 # check to see if a use is logged in 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'blogpost', 'blog', 'home', 'singleUser'] 
+    allowed_routes = ['login', 'signup', 'index', 'blogpost', 'blog', 'home', 'singleUser', 'none'] 
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
+
 #displays all users on home page
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -47,7 +49,6 @@ def index():
     
 
 # login form, will prompt user if their login is incorrect or doesn't exist
-# need to write something to rereoute user to home page or blog entry when they log in
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     username = ""
@@ -112,13 +113,24 @@ def signup():
                 username_error = "That user name is already taken!"
     return render_template('signup.html', username = username, username_error = username_error, password_error = password_error, verifypass_error = verifypass_error)
 
+# shows all blog posts on one page, able to click on title to go to indiviual posts
+@app.route('/blogposts', methods=['POST', 'GET'])
+def blogposts():
+    all_posts = Blog.query.all()
+        
+    blog_id = request.args.get('id')
+    if blog_id:
+        post = Blog.query.get(blog_id)
+        return render_template('blogpost.html', post=post)
+        
+    return render_template('blogpost.html', title="Build a Blog!", blogs=all_posts)
+
 # shows a single users posts on one page
 @app.route('/userposts', methods=['POST', 'GET'])
 def userposts():
     blog_id = request.args.get('id')
     user_id = request.args.get('userid')
     posts = Blog.query.all()
-
 
     if blog_id:
         post = Blog.query.filter_by(id=blog_id).first()
