@@ -36,16 +36,15 @@ class User(db.Model):
 # check to see if a use is logged in 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'blogpost', 'blog', 'home'] 
+    allowed_routes = ['login', 'signup', 'index', 'blogpost', 'blog', 'home', 'singleUser'] 
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
-
+#displays all users on home page
 @app.route('/', methods=['POST', 'GET'])
 def index():
     users = User.query.all()
     return render_template('index.html', users=users)
     
-# displays posts on home page
 
 # login form, will prompt user if their login is incorrect or doesn't exist
 # need to write something to rereoute user to home page or blog entry when they log in
@@ -113,8 +112,9 @@ def signup():
                 username_error = "That user name is already taken!"
     return render_template('signup.html', username = username, username_error = username_error, password_error = password_error, verifypass_error = verifypass_error)
 
-@app.route('/blog', methods=['POST', 'GET'])
-def blog():
+# shows a single users posts on one page
+@app.route('/userposts', methods=['POST', 'GET'])
+def userposts():
     blog_id = request.args.get('id')
     user_id = request.args.get('userid')
     posts = Blog.query.all()
@@ -158,14 +158,12 @@ def create_post():
 
     return render_template('submission_form.html', title = title, content = content, title_error = title_error, content_error = content_error)
 
-# write a function to allow a sinlge users posts to be displayed
-#@app.route("/single_user", methods= ['GET'])
-#def single_user():
+
 @app.route('/logout')
 def logout():
     del session['username']
     flash('You are logged out', 'success')
-    return redirect('/blogpost')
+    return redirect('/')
 
 
 
