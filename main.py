@@ -36,7 +36,7 @@ class User(db.Model):
 # check to see if a use is logged in 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'blogpost', 'single_user', 'home'] 
+    allowed_routes = ['login', 'signup', 'index', 'blogpost', 'blog', 'home'] 
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -117,17 +117,17 @@ def signup():
 def blog():
     blog_id = request.args.get('id')
     user_id = request.args.get('userid')
-    entries = Blog.query.all()
+    posts = Blog.query.all()
 
 
     if blog_id:
         post = Blog.query.filter_by(id=blog_id).first()
-        return render_template("blogpost.html", title=post.title, body=post.body, user=post.owner.username, user_id=post.owner_id)
+        return render_template("blogpost.html", title=post.title, content=post.content, user=post.owner.username, user_id=post.owner_id)
     if user_id:
-        entries = Blog.query.filter_by(owner_id=user_id).all()
-        return render_template('singleUser.html', entries=entries)
+        posts = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('singleUser.html', posts=posts)
 
-    return render_template('singleUser.html', entries=entries)
+    return render_template('singleUser.html', posts=posts)
 
 
 # allow user to create new blog entry
