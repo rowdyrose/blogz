@@ -1,4 +1,4 @@
-
+    
 {% extends "base.html" %}
 
 {% block content %}
@@ -7,14 +7,12 @@
         <h1>User Posts</h1>
 
         <hr>
-        {% for post in posts %}
         <div>
-
-          <a href="/blog?id={{post.id}}"><h2>{{ post.title }}</h2></a>
+          {% for post in posts %}
+          <a href="/userposts?id={{post.id}}"><h2>{{ post.title }}</h2></a>
           <p>{{ post.content }}</p>
-          <p>Posted by: <a href="/blog?userid={{post.owner_id}}">{{ post.owner.username }}</a></p>
-
+          <p>Posted by: <a href="/userposts?userid={{post.owner_id}}">{{ post.owner.username }}</a></p>
+          {% endfor %}
         </div>
-        {% endfor %}
       </div>
 {% endblock %}

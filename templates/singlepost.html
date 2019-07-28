@@ -2,12 +2,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% for post in posts}
     <div>
-        <h2>{{ post.title }}</h2>
-        <p>{{ post.content }}</p>
+        <h2>{{ title }}</h2>
+        <p>{{ content }}</p>
         <p>Posted by: <a href="/blog?userid={{user_id}}">{{ user }}</a></p>
 
       </div>
-      {% endfor %}
 {% endblock %}

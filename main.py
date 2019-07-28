@@ -139,7 +139,7 @@ def userposts():
 
     if blog_id:
         post = Blog.query.filter_by(id=blog_id).first()
-        return render_template("singlepost.html", title=post.title, content=post.content, user=post.owner.username, user_id=post.owner_id)
+        return render_template("singleUser.html", title=post.title, content=post.content, user=post.owner.username, user_id=post.owner_id)
     if user_id:
         posts = Blog.query.filter_by(owner_id=user_id).all()
         return render_template('singleUser.html', posts=posts)
